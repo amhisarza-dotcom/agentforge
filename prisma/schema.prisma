@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+  }
+
+  datasource db {
+    provider  = "postgresql"
+      url       = env("DATABASE_URL")
+        directUrl = env("DIRECT_URL")
+        }
+
+        model User {
+          id        String   @id @default(cuid())
+            email     String   @unique
+              name      String?
+                password  String
+                  role      Role     @default(USER)
+                    createdAt DateTime @default(now())
+                      updatedAt DateTime @updatedAt
+                        agents    Agent[]
+                          apiKeys   ApiKey[]
+                          }
+
+                          model Agent {
+                            id            String        @id @default(cuid())
+                              name          String
+                                description   String?
+                                  systemPrompt  String        @db.Text
+                                    model         String        @default("gpt-4")
+                                      temperature   Float         @default(0.7)
+                                        maxTokens     Int           @default(2048)
+                                          status        AgentStatus   @default(DRAFT)
+                                            userId        String
+                                              user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+                                                conversations Conversation[]
+                                                  tools         AgentTool[]
+                                                    createdAt     DateTime      @default(now())
+                                                      updatedAt     DateTime      @updatedAt
+
+                                                        @@index([userId])
+                                                        }
+
+                                                        model AgentTool {
+                                                          id          String @id @default(cuid())
+                                                            name        String
+                                                              description String?
+                                                                type        ToolType
+                                                                  config      Json
+                                                                    agentId     String
+                                                                      agent       Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+                                                                        createdAt   DateTime @default(now())
+
+                                                                          @@index([agentId])
+                                                                          }
+
+                                                                          model Conversation {
+                                                                            id        String    @id @default(cuid())
+                                                                              title     String?
+                                                                                agentId   String
+                                                                                  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+                                                                                    messages  Message[]
+                                                                                      createdAt DateTime  @default(now())
+                                                                                        updatedAt DateTime  @updatedAt
+
+                                                                                          @@index([agentId])
+                                                                                          }
+
+                                                                                          model Message {
+                                                                                            id             String       @id @default(cuid())
+                                                                                              role           MessageRole
+                                                                                                content        String       @db.Text
+                                                                                                  conversationId String
+                                                                                                    conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+                                                                                                      createdAt      DateTime     @default(now())
+                                                                                                      
+                                                                                                        @@index([conversationId])
+                                                                                                        }
+                                                                                                        
+                                                                                                        model ApiKey {
+                                                                                                          id        String   @id @default(cuid())
+                                                                                                            name      String
+                                                                                                              key       String   @unique
+                                                                                                                userId    String
+                                                                                                                  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+                                                                                                                    lastUsed  DateTime?
+                                                                                                                      createdAt DateTime @default(now())
+                                                                                                                      
+                                                                                                                        @@index([userId])
+                                                                                                                        }
+                                                                                                                        
+                                                                                                                        enum Role {
+                                                                                                                          USER
+                                                                                                                            ADMIN
+                                                                                                                            }
+                                                                                                                            
+                                                                                                                            enum AgentStatus {
+                                                                                                                              DRAFT
+                                                                                                                                ACTIVE
+                                                                                                                                  PAUSED
+                                                                                                                                    ARCHIVED
+                                                                                                                                    }
+                                                                                                                                    
+                                                                                                                                    enum ToolType {
+                                                                                                                                      API_CALL
+                                                                                                                                        WEB_SEARCH
+                                                                                                                                          CODE_EXEC
+                                                                                                                                            FILE_READ
+                                                                                                                                              CUSTOM
+                                                                                                                                              }
+                                                                                                                                              
+                                                                                                                                              enum MessageRole {
+                                                                                                                                                USER
+                                                                                                                                                  ASSISTANT
+                                                                                                                                                    SYSTEM
+                                                                                                                                                    }
