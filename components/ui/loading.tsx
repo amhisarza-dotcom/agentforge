@@ -3,7 +3,7 @@ export function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
     return (
           <div className="flex justify-center py-8">
                 <div className={`animate-spin ${sizeClasses[size]} border-2 border-primary border-t-transparent rounded-full`} />
-          </div>div>
+          </div>
         );
 }
 
@@ -12,9 +12,9 @@ export function PageLoading() {
           <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
                         <div className="animate-spin h-10 w-10 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-                        <p className="text-dark-400 text-sm">Loading...</p>p>
-                </div>div>
-          </div>div>
+                        <p className="text-dark-400 text-sm">Loading...</p>
+                </div>
+          </div>
         );
 }
 
@@ -24,7 +24,7 @@ export function CardSkeleton() {
                 <div className="h-4 bg-dark-700 rounded w-3/4 mb-3" />
                 <div className="h-3 bg-dark-700 rounded w-1/2 mb-2" />
                 <div className="h-3 bg-dark-700 rounded w-2/3" />
-          </div>div>
+          </div>
         );
 }
 
@@ -37,10 +37,11 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
                               <div className="flex-1">
                                           <div className="h-4 bg-dark-700 rounded w-1/3 mb-2" />
                                           <div className="h-3 bg-dark-700 rounded w-1/2" />
-                              </div>div>
+                              </div>
                               <div className="h-6 w-16 bg-dark-700 rounded" />
-                    </div>div>
+                    </div>
                   ))}
-          </div>div>
+          </div>
         );
+}
 }</div>
